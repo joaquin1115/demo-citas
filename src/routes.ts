@@ -16,6 +16,6 @@ export const routes: RouteObject[] = [
   ...accessManagementRoutes,
   {
     path: '*',
-    element: <NotFound></NotFound>
+    element: <NotFound />
   }
 ];
