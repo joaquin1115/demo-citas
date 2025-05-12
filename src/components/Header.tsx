@@ -9,10 +9,15 @@ import {
   UserCog, 
   Users, 
   Stethoscope,
-  CheckCircle
+  CheckCircle,
+  Menu
 } from 'lucide-react';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onMenuClick: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { user, logout, switchRole, switchProfile } = useUser();
   const navigate = useNavigate();
   const [showRoleMenu, setShowRoleMenu] = useState(false);
@@ -83,8 +88,16 @@ const Header: React.FC = () => {
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm z-10">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="text-2xl font-semibold text-blue-600">
-          MedConnect
+        <div className="flex items-center">
+          <button 
+            onClick={onMenuClick}
+            className="p-2 rounded-full hover:bg-gray-100 md:mr-4"
+          >
+            <Menu size={20} />
+          </button>
+          <div className="text-2xl font-semibold text-blue-600">
+            MedConnect
+          </div>
         </div>
 
         <div className="flex items-center space-x-4">
@@ -200,6 +213,6 @@ const Header: React.FC = () => {
       </div>
     </header>
   );
-};
+}
 
 export default Header;
