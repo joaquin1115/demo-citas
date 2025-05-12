@@ -78,7 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
         <div className="flex items-center justify-between h-16 border-b border-gray-200 px-4">
           <Link to="/" className={`flex items-center ${!isOpen && 'justify-center'}`}>
             <Stethoscope className="h-6 w-6 text-blue-600" />
-            {isOpen && <span className="ml-2 text-xl font-bold text-gray-900">MedConnect</span>}
+            {isOpen && <span className="ml-2 text-xl font-bold text-gray-900">EsSalud</span>}
           </Link>
           <button
             onClick={onToggle}
