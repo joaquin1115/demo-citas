@@ -23,7 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   if (!user) return null;
 
   const isActive = (path: string) => {
-    return location.pathname.startsWith(path);
+    return location.pathname === path;
   };
 
   const menuItems = [
@@ -68,21 +68,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
       isOpen ? 'w-64' : 'w-20'
     } hidden md:block`}>
       <div className="h-full flex flex-col">
-        <div className="flex items-center justify-between h-16 border-b border-gray-200 px-4">
+        <div className="flex items-center h-16 border-b border-gray-200 px-4">
           <Link to="/" className={`flex items-center ${!isOpen && 'justify-center'}`}>
-            <img 
-              src="/images/logo.png" 
-              alt="EsSalud" 
-              className="h-8"
-            />
+            <div className={`flex-shrink-0 ${isOpen ? 'w-8' : 'w-12'}`}>
+              <img 
+                src="/images/logo.png" 
+                alt="EsSalud" 
+                className="w-full h-auto"
+              />
+            </div>
             {isOpen && <span className="ml-2 text-xl font-bold text-essalud-blue">EsSalud</span>}
           </Link>
-          <button
-            onClick={onToggle}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-          >
-            {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-          </button>
         </div>
         
         <nav className="flex-1 overflow-y-auto py-4">
