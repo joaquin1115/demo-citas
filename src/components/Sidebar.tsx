@@ -89,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                   to={item.path}
                   className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
                     isActive(item.path)
-                      ? 'bg-essalud-blue text-white'
+                      ? 'bg-essalud-darkblue text-white'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                   title={!isOpen ? item.title : undefined}
