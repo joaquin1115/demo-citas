@@ -97,7 +97,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           </button>
           <div className="flex items-center">
             <img 
-              src="https://raw.githubusercontent.com/Human/essalud-app/main/logo.png" 
+              src="images/logo.png" 
               alt="EsSalud" 
               className="h-8 mr-2"
             />
