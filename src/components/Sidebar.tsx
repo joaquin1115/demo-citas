@@ -7,17 +7,10 @@ import {
   Calendar, 
   Stethoscope, 
   Users, 
-  Settings,
-  ChevronLeft,
-  ChevronRight
+  Settings
 } from 'lucide-react';
 
-interface SidebarProps {
-  isOpen: boolean;
-  onToggle: () => void;
-}
-
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
+const Sidebar: React.FC = () => {
   const { user } = useUser();
   const location = useLocation();
 
@@ -71,72 +64,52 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   );
 
   return (
-    <>
-      <aside 
-        className={`bg-white border-r border-gray-200 fixed inset-y-0 left-0 z-20 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 ${isOpen ? 'w-64' : 'w-0 md:w-64'}`}
-      >
-        <div className="h-full flex flex-col">
-          <div className="flex items-center justify-between h-16 border-b border-gray-200 px-4">
-            <Link to="/" className="flex items-center">
-              <Stethoscope className="h-6 w-6 text-blue-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">MedConnect</span>
-            </Link>
-            <button 
-              onClick={onToggle}
-              className="md:hidden p-2 rounded-md hover:bg-gray-100"
-            >
-              {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-            </button>
-          </div>
-          
-          <nav className="flex-1 overflow-y-auto py-4">
-            <ul className="space-y-1 px-2">
-              {filteredMenuItems.map((item) => (
-                <li key={item.path}>
-                  <Link
-                    to={item.path}
-                    className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
-                      isActive(item.path)
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span className={`mr-3 ${isActive(item.path) ? 'text-blue-500' : 'text-gray-500'}`}>
-                      {item.icon}
-                    </span>
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          
-          <div className="p-4 border-t border-gray-200">
-            <div className="flex items-center">
-              <img 
-                src={user.avatarUrl || "https://i.pravatar.cc/150?img=1"} 
-                alt={user.name} 
-                className="h-8 w-8 rounded-full"
-              />
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700 truncate">{user.name}</p>
-                <p className="text-xs text-gray-500 truncate">{user.email}</p>
-              </div>
+    <aside className="w-64 bg-white border-r border-gray-200 fixed inset-y-0 left-0 z-20 transform transition-transform duration-300 ease-in-out hidden md:block">
+      <div className="h-full flex flex-col">
+        <div className="flex items-center justify-center h-16 border-b border-gray-200">
+          <Link to="/" className="flex items-center">
+            <Stethoscope className="h-6 w-6 text-blue-600" />
+            <span className="ml-2 text-xl font-bold text-gray-900">MedConnect</span>
+          </Link>
+        </div>
+        
+        <nav className="flex-1 overflow-y-auto py-4">
+          <ul className="space-y-1 px-2">
+            {filteredMenuItems.map((item) => (
+              <li key={item.path}>
+                <Link
+                  to={item.path}
+                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
+                    isActive(item.path)
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className={`mr-3 ${isActive(item.path) ? 'text-blue-500' : 'text-gray-500'}`}>
+                    {item.icon}
+                  </span>
+                  {item.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        
+        <div className="p-4 border-t border-gray-200">
+          <div className="flex items-center">
+            <img 
+              src={user.avatarUrl || "https://i.pravatar.cc/150?img=1"} 
+              alt={user.name} 
+              className="h-8 w-8 rounded-full"
+            />
+            <div className="ml-3">
+              <p className="text-sm font-medium text-gray-700 truncate">{user.name}</p>
+              <p className="text-xs text-gray-500 truncate">{user.email}</p>
             </div>
           </div>
         </div>
-      </aside>
-
-      {/* Overlay for mobile */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-gray-600 bg-opacity-50 z-10 md:hidden"
-          onClick={onToggle}
-        ></div>
-      )}
-    </>
+      </div>
+    </aside>
   );
 };
 
