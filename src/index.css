@@ -2,24 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  @font-face {
-    font-family: 'Tahoma';
-    src: url('https://db.onlinewebfonts.com/t/4290dc0f334f28208bb3e75bc5fa4acc.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-  }
-  
-  @font-face {
-    font-family: 'Tahoma';
-    src: url('https://db.onlinewebfonts.com/t/b00461154a744c8069c01abcb6efc14a.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-  }
+@font-face {
+  font-family: 'Tahoma';
+  src: url('https://db.onlinewebfonts.com/t/4290dc0f334f28208bb3e75bc5fa4acc.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
 
-  body {
-    @apply text-gray-900 bg-gray-100 font-tahoma;
-  }
+@font-face {
+  font-family: 'Tahoma';
+  src: url('https://db.onlinewebfonts.com/t/b00461154a744c8069c01abcb6efc14a.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+body {
+  @apply text-gray-900 bg-gray-100 font-tahoma;
 }
 
 @layer utilities {
