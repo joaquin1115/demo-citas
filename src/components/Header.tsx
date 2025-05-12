@@ -95,8 +95,15 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           >
             <Menu size={20} />
           </button>
-          <div className="text-2xl font-semibold text-blue-600">
-            MedConnect
+          <div className="flex items-center">
+            <img 
+              src="https://raw.githubusercontent.com/Human/essalud-app/main/logo.png" 
+              alt="EsSalud" 
+              className="h-8 mr-2"
+            />
+            <span className="text-2xl font-bold text-essalud-blue">
+              EsSalud
+            </span>
           </div>
         </div>
 
@@ -213,6 +220,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
       </div>
     </header>
   );
-}
+};
 
 export default Header;
