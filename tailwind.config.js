@@ -10,7 +10,7 @@ export default {
         }
       },
       fontFamily: {
-        'tahoma': ['Tahoma', 'sans-serif']
+        tahoma: ['Tahoma', 'sans-serif']
       }
     },
   },
