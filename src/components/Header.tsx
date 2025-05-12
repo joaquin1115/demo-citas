@@ -9,7 +9,6 @@ import {
   UserCog, 
   Users, 
   Stethoscope,
-  CheckCircle,
   Menu
 } from 'lucide-react';
 
@@ -95,26 +94,14 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           >
             <Menu size={20} />
           </button>
-          <div className="flex items-center">
-            <img 
-              src="images/logo.png" 
-              alt="EsSalud" 
-              className="h-8 mr-2"
-            />
-            <span className="text-2xl font-bold text-essalud-blue">
-              EsSalud
-            </span>
-          </div>
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* Notifications */}
           <button className="p-2 rounded-full hover:bg-gray-100 relative">
             <Bell size={20} />
             <span className="absolute top-1 right-1 bg-red-500 rounded-full w-2 h-2"></span>
           </button>
 
-          {/* Role Switcher */}
           <div className="relative">
             <button 
               onClick={() => setShowRoleMenu(!showRoleMenu)}
@@ -148,7 +135,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             )}
           </div>
 
-          {/* Profile Switcher - Only show if user is in patient role and has multiple profiles */}
           {user.currentRole === 'patient' && user.profiles.length > 1 && (
             <div className="relative">
               <button 
@@ -184,7 +170,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             </div>
           )}
 
-          {/* User menu */}
           <div className="relative">
             <button 
               onClick={() => setShowUserMenu(!showUserMenu)}

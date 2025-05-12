@@ -6,8 +6,7 @@ import {
   FileText, 
   Calendar, 
   Stethoscope, 
-  Users, 
-  Settings,
+  Users,
   ChevronRight,
   ChevronLeft
 } from 'lucide-react';
@@ -57,12 +56,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
       path: '/access-management',
       icon: <Users size={20} />,
       roles: ['admin']
-    },
-    {
-      title: 'Configuración',
-      path: '/settings',
-      icon: <Settings size={20} />,
-      roles: ['patient', 'admin', 'medical']
     }
   ];
 
@@ -77,8 +70,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
       <div className="h-full flex flex-col">
         <div className="flex items-center justify-between h-16 border-b border-gray-200 px-4">
           <Link to="/" className={`flex items-center ${!isOpen && 'justify-center'}`}>
-            <Stethoscope className="h-6 w-6 text-blue-600" />
-            {isOpen && <span className="ml-2 text-xl font-bold text-gray-900">EsSalud</span>}
+            <img 
+              src="/images/logo.png" 
+              alt="EsSalud" 
+              className="h-8"
+            />
+            {isOpen && <span className="ml-2 text-xl font-bold text-essalud-blue">EsSalud</span>}
           </Link>
           <button
             onClick={onToggle}
@@ -96,12 +93,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                   to={item.path}
                   className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
                     isActive(item.path)
-                      ? 'bg-blue-50 text-blue-700'
+                      ? 'bg-essalud-blue text-white'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                   title={!isOpen ? item.title : undefined}
                 >
-                  <span className={`${isActive(item.path) ? 'text-blue-500' : 'text-gray-500'}`}>
+                  <span className={isActive(item.path) ? 'text-white' : 'text-gray-500'}>
                     {item.icon}
                   </span>
                   {isOpen && <span className="ml-3">{item.title}</span>}
