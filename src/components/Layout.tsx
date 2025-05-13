@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
 import Header from './Header';
@@ -12,7 +12,7 @@ import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 
 const Layout = () => {
-  const { user, isAuthenticated } = useUser();
+  const {isAuthenticated } = useUser();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
   if (!isAuthenticated) {
@@ -22,7 +22,7 @@ const Layout = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <div className={`flex flex-col flex-1 overflow-hidden transition-all duration-300 ${isSidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
+      <div className={`flex flex-col flex-1 overflow-hidden transition-all duration-300 ${isSidebarOpen ? 'md:ml-64' : 'md:ml-16'}`}>
         <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <Routes>

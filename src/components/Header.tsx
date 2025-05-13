@@ -85,7 +85,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm z-10">
+    <header className="bg-white border-b border-gray-200 z-10">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <button 
           onClick={onMenuClick}
