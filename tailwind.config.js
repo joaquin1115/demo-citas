@@ -6,9 +6,11 @@ export default {
     extend: {
       colors: {
         'essalud': {
-          blue: '#0075C9',
-          light: '#41B6E6',
-          darkblue: '#004D7F'
+          blue: '#006BB6',
+          hoverBlue: '#005A99',
+          light: '#FFF',
+          darkblue: '#004D7F',
+          orange: '#ffbc0e'
         }
       },
       fontFamily: {
