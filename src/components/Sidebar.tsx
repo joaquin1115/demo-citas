@@ -1,14 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
-import { 
-  Home, 
-  FileText, 
-  Calendar, 
-  Stethoscope, 
-  Users,
-  ChevronRight,
-  ChevronLeft
+import {
+  Home,
+  FileText,
+  Calendar,
+  Stethoscope,
+  Users
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -16,7 +14,7 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const { user } = useUser();
   const location = useLocation();
 
@@ -59,28 +57,28 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
     }
   ];
 
-  const filteredMenuItems = menuItems.filter(item => 
+  const filteredMenuItems = menuItems.filter(item =>
     item.roles.includes(user.currentRole)
   );
 
   return (
     <aside className={`fixed inset-y-0 left-0 z-20 transform transition-transform duration-300 ease-in-out bg-white border-r border-gray-200 ${
-      isOpen ? 'w-64' : 'w-20'
+      isOpen ? 'w-64' : 'w-13'
     } hidden md:block`}>
       <div className="h-full flex flex-col">
         <div className="flex items-center h-16 border-b border-gray-200 px-4">
           <Link to="/" className={`flex items-center ${!isOpen && 'justify-center'}`}>
-            <div className={`flex-shrink-0 ${isOpen ? 'w-8' : 'w-12'}`}>
-              <img 
-                src="/images/logo.png" 
-                alt="EsSalud" 
+            <div className={`flex-shrink-0 ${isOpen ? 'w-7' : 'w-8'}`}>
+              <img
+                src="/images/logo.png"
+                alt="EsSalud"
                 className="w-full h-auto"
               />
             </div>
             {isOpen && <span className="ml-2 text-xl font-bold text-essalud-blue">EsSalud</span>}
           </Link>
         </div>
-        
+
         <nav className="flex-1 overflow-y-auto py-4">
           <ul className="space-y-1 px-2">
             {filteredMenuItems.map((item) => (
@@ -103,13 +101,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             ))}
           </ul>
         </nav>
-        
+
         {isOpen && (
           <div className="p-4 border-t border-gray-200">
             <div className="flex items-center">
-              <img 
-                src={user.avatarUrl || "https://i.pravatar.cc/150?img=1"} 
-                alt={user.name} 
+              <img
+                src={user.avatarUrl || "https://i.pravatar.cc/150?img=1"}
+                alt={user.name}
                 className="h-8 w-8 rounded-full"
               />
               <div className="ml-3">
