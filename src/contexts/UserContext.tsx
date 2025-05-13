@@ -51,7 +51,7 @@ const sampleUser: User = {
   email: 'juan.perez@example.com',
   currentRole: 'patient',
   roles: ['patient', 'admin', 'medical'],
-  avatarUrl: 'https://i.pravatar.cc/150?u=juanperez',
+  avatarUrl: '../images/user.jpeg',
   profiles: [
     { id: '1', name: 'Juan Pérez', isCurrentUser: true },
     { id: '2', name: 'Martina Pérez', isCurrentUser: false },
@@ -71,7 +71,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsAuthenticated(true);
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async () => {
     // In a real app, this would make an API call to authenticate
     try {
       // Simulate API delay

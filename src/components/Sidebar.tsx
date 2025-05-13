@@ -62,11 +62,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   );
 
   return (
-    <aside className={`fixed inset-y-0 left-0 z-20 transform transition-transform duration-300 ease-in-out bg-white border-r border-gray-200 ${
+    <aside className={`fixed inset-y-0 left-0 z-20 transform transition-transform duration-300 ease-in-out bg-essalud-darkblue border-r border-gray-200 ${
       isOpen ? 'w-64' : 'w-13'
     } hidden md:block`}>
       <div className="h-full flex flex-col">
-        <div className="flex items-center h-16 border-b border-gray-200 px-4">
+        <div className="flex items-center h-16  px-4">
           <Link to="/" className={`flex items-center ${!isOpen && 'justify-center'}`}>
             <div className={`flex-shrink-0 ${isOpen ? 'w-7' : 'w-8'}`}>
               <img
@@ -75,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
                 className="w-full h-auto"
               />
             </div>
-            {isOpen && <span className="ml-2 text-xl font-bold text-essalud-blue">EsSalud</span>}
+            {isOpen && <span className="ml-2 -mt-1 text-2xl font-bold text-white">EsSalud</span>}
           </Link>
         </div>
 
@@ -87,12 +87,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
                   to={item.path}
                   className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
                     isActive(item.path)
-                      ? 'bg-essalud-darkblue text-white'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'bg-essalud-blue text-essalud-orange'
+                      : 'text-white hover:bg-essalud-hoverBlue'
                   }`}
                   title={!isOpen ? item.title : undefined}
                 >
-                  <span className={isActive(item.path) ? 'text-white' : 'text-gray-500'}>
+                  <span className={isActive(item.path) ? 'text-essalud-orange' : 'text-white'}>
                     {item.icon}
                   </span>
                   {isOpen && <span className="ml-3">{item.title}</span>}
@@ -111,8 +111,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
                 className="h-8 w-8 rounded-full"
               />
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700 truncate">{user.name}</p>
-                <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                <p className="text-xs text-gray-300 truncate">{user.email}</p>
               </div>
             </div>
           </div>
