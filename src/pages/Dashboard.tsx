@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
 import { Calendar, FileText, AlertCircle, Users, Stethoscope, Clock } from 'lucide-react';
 
@@ -163,7 +164,7 @@ const AdminDashboard: React.FC = () => {
       <div className="col-span-1 md:col-span-2 bg-white rounded-lg shadow-sm p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-medium text-gray-800">Solicitudes de Acceso Pendientes</h2>
-          <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
+          <span className="inline-flex items-center justify-center text-center px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">
             {pendingAccessRequests.length} nuevas
           </span>
         </div>
@@ -178,13 +179,13 @@ const AdminDashboard: React.FC = () => {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Tipo
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Documento
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Fecha
                 </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Acciones
                 </th>
               </tr>
@@ -199,10 +200,10 @@ const AdminDashboard: React.FC = () => {
                     <div className="text-sm text-gray-500">{request.type}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{request.document}</div>
+                    <div className="text-left text-sm text-gray-500">{request.document}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{request.requestDate}</div>
+                    <div className="text-left text-sm text-gray-500">{request.requestDate}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button className="text-green-600 hover:text-green-800 mr-3">
@@ -219,7 +220,7 @@ const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Estadísticas para Administradores */}
       <div className="col-span-1 space-y-6">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-lg font-medium text-gray-800 mb-4">Estadísticas</h2>
@@ -261,15 +262,21 @@ const AdminDashboard: React.FC = () => {
           <h2 className="text-lg font-medium text-gray-800 mb-4">Acciones Rápidas</h2>
           
           <div className="space-y-3">
-            <button className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center">
+            <Link
+                to='/access-management'
+                className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center"
+            >
               <Users className="h-5 w-5 mr-2" />
               Gestionar Usuarios
-            </button>
-            
-            <button className="w-full py-2 px-4 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors flex items-center justify-center">
-              <FileText className="h-5 w-5 mr-2" />
+            </Link>
+
+            <Link
+                to='/medical-records'
+                className="w-full py-2 px-4 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors flex items-center justify-center"
+            >
+              <Users className="h-5 w-5 mr-2" />
               Historias Clínicas
-            </button>
+            </Link>
           </div>
         </div>
       </div>

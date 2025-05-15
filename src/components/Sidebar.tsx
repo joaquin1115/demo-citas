@@ -41,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       title: 'Citas Médicas',
       path: '/appointments',
       icon: <Calendar size={20} />,
-      roles: ['patient', 'admin', 'medical']
+      roles: ['patient', 'medical']
     },
     {
       title: 'Servicios Médicos',
