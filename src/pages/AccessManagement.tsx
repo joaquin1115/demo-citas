@@ -6,9 +6,7 @@ import {
   Check, 
   X, 
   Users, 
-  UserPlus, 
-  ChevronRight, 
-  FileText,
+  UserPlus,
   Shield,
   AlertTriangle,
   CheckCircle,
@@ -17,7 +15,6 @@ import {
 
 const AccessManagement: React.FC = () => {
   const { user } = useUser();
-  const [searchTerm, setSearchTerm] = useState('');
   const [view, setView] = useState<'requests' | 'users'>('requests');
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
   
