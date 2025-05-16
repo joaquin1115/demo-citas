@@ -735,8 +735,7 @@ const MedicalServices: React.FC = () => {
                   <span className="mr-1">←</span> Volver
                 </button>
                 <h2 className="text-2xl font-semibold text-gray-800">
-                  {appointments.fin
-d(a => a.id === selectedAppointment)?.patientName}
+                  {appointments.find(a => a.id === selectedAppointment)?.patientName}
                 </h2>
                 <p className="text-gray-600">
                   {appointments.find(a => a.id === selectedAppointment)?.reason}
