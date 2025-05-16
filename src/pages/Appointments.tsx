@@ -12,7 +12,10 @@ import {
   Stethoscope,
   Heart,
   Activity,
-  Brain
+  Brain,
+  Thermometer,
+  Clipboard,
+  FileCheck
 } from 'lucide-react';
 
 const Appointments: React.FC = () => {
@@ -20,6 +23,8 @@ const Appointments: React.FC = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<string | null>(null);
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [orderType, setOrderType] = useState<'exam' | 'surgery' | 'therapy' | 'consultation' | null>(null);
+  const [showAttentionForm, setShowAttentionForm] = useState(false);
+  const [attentionType, setAttentionType] = useState<'triage' | 'exam' | 'diagnosis' | null>(null);
 
   if (!user) return null;
 
@@ -53,6 +58,12 @@ const Appointments: React.FC = () => {
     setOrderType(null);
   };
 
+  const handleSaveAttention = () => {
+    // Here you would submit the attention record to your backend
+    setShowAttentionForm(false);
+    setAttentionType(null);
+  };
+
   return (
     <div className="container mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -69,6 +80,8 @@ const Appointments: React.FC = () => {
                     setSelectedAppointment(null);
                     setShowOrderForm(false);
                     setOrderType(null);
+                    setShowAttentionForm(false);
+                    setAttentionType(null);
                   }}
                   className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
                 >
@@ -81,18 +94,268 @@ const Appointments: React.FC = () => {
                   {appointments.find(a => a.id === selectedAppointment)?.reason}
                 </p>
               </div>
-              {!showOrderForm && (
-                <button
-                  onClick={() => setShowOrderForm(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
-                >
-                  <Plus size={20} className="mr-2" />
-                  Generar Orden
-                </button>
-              )}
+              <div className="flex space-x-3">
+                {!showOrderForm && !showAttentionForm && (
+                  <>
+                    <button
+                      onClick={() => setShowAttentionForm(true)}
+                      className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center"
+                    >
+                      <FileCheck size={20} className="mr-2" />
+                      Registrar Atención
+                    </button>
+                    <button
+                      onClick={() => setShowOrderForm(true)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
+                    >
+                      <Plus size={20} className="mr-2" />
+                      Generar Orden
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
 
-            {showOrderForm ? (
+            {showAttentionForm ? (
+              <div className="space-y-6">
+                {!attentionType ? (
+                  <>
+                    <h3 className="text-lg font-medium text-gray-800 mb-4">
+                      Seleccionar Tipo de Atención
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <button
+                        onClick={() => setAttentionType('triage')}
+                        className="p-6 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                      >
+                        <div className="flex items-center mb-3">
+                          <Thermometer className="h-8 w-8 text-blue-600 mr-3" />
+                          <h4 className="text-lg font-medium">Triaje</h4>
+                        </div>
+                        <p className="text-gray-600">
+                          Registro de signos vitales y evaluación inicial.
+                        </p>
+                      </button>
+
+                      <button
+                        onClick={() => setAttentionType('exam')}
+                        className="p-6 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                      >
+                        <div className="flex items-center mb-3">
+                          <Clipboard className="h-8 w-8 text-green-600 mr-3" />
+                          <h4 className="text-lg font-medium">Examen Médico</h4>
+                        </div>
+                        <p className="text-gray-600">
+                          Evaluación física y registro de hallazgos.
+                        </p>
+                      </button>
+
+                      <button
+                        onClick={() => setAttentionType('diagnosis')}
+                        className="p-6 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                      >
+                        <div className="flex items-center mb-3">
+                          <Stethoscope className="h-8 w-8 text-purple-600 mr-3" />
+                          <h4 className="text-lg font-medium">Diagnóstico</h4>
+                        </div>
+                        <p className="text-gray-600">
+                          Registro de diagnóstico y plan de tratamiento.
+                        </p>
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="bg-white rounded-lg">
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-lg font-medium text-gray-800">
+                        {attentionType === 'triage' && 'Registro de Triaje'}
+                        {attentionType === 'exam' && 'Examen Médico'}
+                        {attentionType === 'diagnosis' && 'Diagnóstico'}
+                      </h3>
+                      <button
+                        onClick={() => setAttentionType(null)}
+                        className="text-gray-500 hover:text-gray-700"
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
+
+                    {attentionType === 'triage' && (
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Temperatura (°C)
+                            </label>
+                            <input
+                              type="number"
+                              step="0.1"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="36.5"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Presión Arterial (mmHg)
+                            </label>
+                            <div className="flex space-x-2">
+                              <input
+                                type="number"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="120"
+                              />
+                              <span className="flex items-center">/</span>
+                              <input
+                                type="number"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="80"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Frecuencia Cardíaca (lpm)
+                            </label>
+                            <input
+                              type="number"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="75"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Peso (kg)
+                            </label>
+                            <input
+                              type="number"
+                              step="0.1"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="70.5"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Talla (cm)
+                            </label>
+                            <input
+                              type="number"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="170"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Saturación O2 (%)
+                            </label>
+                            <input
+                              type="number"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="98"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {attentionType === 'exam' && (
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Motivo de Consulta
+                          </label>
+                          <textarea
+                            rows={3}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Descripción del motivo de consulta..."
+                          ></textarea>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Examen Físico
+                          </label>
+                          <textarea
+                            rows={4}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Hallazgos del examen físico..."
+                          ></textarea>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Observaciones
+                          </label>
+                          <textarea
+                            rows={3}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Observaciones adicionales..."
+                          ></textarea>
+                        </div>
+                      </div>
+                    )}
+
+                    {attentionType === 'diagnosis' && (
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Diagnóstico Principal
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Código CIE-10 y descripción"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Plan de Tratamiento
+                          </label>
+                          <textarea
+                            rows={4}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Descripción del plan de tratamiento..."
+                          ></textarea>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Recomendaciones
+                          </label>
+                          <textarea
+                            rows={3}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Recomendaciones para el paciente..."
+                          ></textarea>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex justify-end space-x-3 mt-6">
+                      <button
+                        onClick={() => {
+                          setShowAttentionForm(false);
+                          setAttentionType(null);
+                        }}
+                        className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={handleSaveAttention}
+                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center"
+                      >
+                        <Save size={20} className="mr-2" />
+                        Guardar Atención
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : showOrderForm ? (
               <div className="space-y-6">
                 {!orderType ? (
                   <>
@@ -278,7 +541,6 @@ const Appointments: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Appointment details and medical record form would go here */}
                 <div className="bg-gray-50 p-4 rounded-md">
                   <h3 className="text-lg font-medium text-gray-800 mb-3">Detalles de la Cita</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -296,8 +558,6 @@ const Appointments: React.FC = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* Add your medical record form components here */}
               </div>
             )}
           </div>
