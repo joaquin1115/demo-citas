@@ -15,7 +15,7 @@ import {
   Brain
 } from 'lucide-react';
 
-const Appointments: React.FC = () => {
+const MedicalServices: React.FC = () => {
   const { user } = useUser();
   const [selectedAppointment, setSelectedAppointment] = useState<string | null>(null);
   const [showOrderForm, setShowOrderForm] = useState(false);
