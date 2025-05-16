@@ -4,10 +4,8 @@ import { useUser, UserRole } from '../contexts/UserContext';
 import { 
   Bell, 
   User, 
-  LogOut, 
+  LogOut,
   ChevronDown,
-  UserCog,
-  Stethoscope,
   Menu
 } from 'lucide-react';
 
@@ -42,17 +40,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
         return 'Personal Médico';
       default:
         return role;
-    }
-  };
-
-  const getRoleIcon = (role: UserRole) => {
-    switch (role) {
-      case 'medical':
-        return <Stethoscope size={16} className="mr-2" />;
-      case 'admin':
-        return <UserCog size={16} className="mr-2" />;
-      default:
-        return <User size={16} className="mr-2" />;
     }
   };
 
@@ -105,30 +92,26 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                   <p className="text-xs text-gray-500 truncate">{user.email}</p>
                 </div>
 
-                <div className="py-2 border-b border-gray-100">
-                  <div className="px-4 py-2 flex items-center bg-gray-50">
-                    {getRoleIcon(user.currentRole)}
-                    <span className="text-sm font-medium">{getRoleLabel(user.currentRole)}</span>
-                    <span className="ml-2">{getRoleEmoji(user.currentRole)}</span>
+                {user.roles.length > 0 && (
+                  <div className="py-2 border-b border-gray-100">
+                    <p className="px-4 py-1 text-xs text-gray-500">Roles disponibles:</p>
+                    {user.roles.map(role => (
+                      <button
+                        key={role}
+                        onClick={() => handleRoleSwitch(role)}
+                        className={`w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center ${
+                          role === user.currentRole ? 'bg-gray-50' : ''
+                        }`}
+                      >
+                        <span className="mr-2">{getRoleEmoji(role)}</span>
+                        <span>{getRoleLabel(role)}</span>
+                        {role === user.currentRole && (
+                          <span className="ml-2 text-xs text-green-600">✓ Activo</span>
+                        )}
+                      </button>
+                    ))}
                   </div>
-                  
-                  {user.roles.length > 1 && (
-                    <>
-                      <p className="px-4 py-1 text-xs text-gray-500 mt-2">Cambiar rol a:</p>
-                      {user.roles.filter(role => role !== user.currentRole).map(role => (
-                        <button
-                          key={role}
-                          onClick={() => handleRoleSwitch(role)}
-                          className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center"
-                        >
-                          {getRoleIcon(role)}
-                          <span>{getRoleLabel(role)}</span>
-                          <span className="ml-2">{getRoleEmoji(role)}</span>
-                        </button>
-                      ))}
-                    </>
-                  )}
-                </div>
+                )}
 
                 <div className="py-1">
                   <button
