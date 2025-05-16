@@ -26,7 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
   const menuItems = [
     {
-      title: 'Dashboard',
+      title: 'Inicio',
       path: '/',
       icon: <Home size={20} />,
       roles: ['patient', 'admin', 'medical']
@@ -62,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   );
 
   return (
-    <aside className={`fixed inset-y-0 left-0 z-20 transform transition-transform duration-300 ease-in-out bg-essalud-darkblue border-r border-gray-200 ${
+    <aside className={`fixed inset-y-0 left-0 z-20 transform transition-transform duration-300 ease-in-out bg-essalud-darkblue border-gray-200 ${
       isOpen ? 'w-64' : 'w-13'
     } hidden md:block`}>
       <div className="h-full flex flex-col">

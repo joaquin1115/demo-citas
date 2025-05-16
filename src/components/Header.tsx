@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser, UserRole } from '../contexts/UserContext';
 import { 
-  Bell, 
-  User, 
+  Bell,
   LogOut,
   ChevronDown,
   Menu
@@ -63,12 +62,12 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           onClick={onMenuClick}
           className="p-2 rounded-full hover:bg-gray-100 md:mr-4"
         >
-          <Menu size={20} />
+          <Menu size={30}  color="#003B5C"/>
         </button>
 
         <div className="flex items-center space-x-4">
           <button className="p-2 rounded-full hover:bg-gray-100 relative">
-            <Bell size={20} />
+            <Bell size={20}  color="#003B5C"/>
             <span className="absolute top-1 right-1 bg-red-500 rounded-full w-2 h-2"></span>
           </button>
 
@@ -82,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                 alt={user.name}
                 className="w-8 h-8 rounded-full object-cover border border-gray-200"
               />
-              <ChevronDown size={16} />
+              <ChevronDown size={20}  color="#003B5C"/>
             </button>
 
             {showUserMenu && (

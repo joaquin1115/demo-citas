@@ -10,7 +10,8 @@ export default {
           hoverBlue: '#005A99',
           light: '#FFF',
           darkblue: '#004D7F',
-          orange: '#ffbc0e'
+          orange: '#FFBC0E',
+          totalBG: '#EDF4FA'
         }
       },
       fontFamily: {
