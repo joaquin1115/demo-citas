@@ -10,6 +10,16 @@ export interface UserProfile {
   isCurrentUser: boolean;
 }
 
+// Define medical order type
+export interface MedicalOrder {
+  id: string;
+  type: 'exam' | 'surgery' | 'therapy';
+  description: string;
+  doctorName: string;
+  orderDate: string;
+  status: 'pending' | 'scheduled' | 'completed';
+}
+
 // Define user type
 export interface User {
   id: string;
@@ -20,6 +30,7 @@ export interface User {
   avatarUrl?: string;
   profiles: UserProfile[];
   currentProfileId: string;
+  medicalOrders?: MedicalOrder[];
 }
 
 // Define context type
@@ -58,6 +69,24 @@ const sampleUser: User = {
     { id: '3', name: 'Mateo Pérez', isCurrentUser: false },
   ],
   currentProfileId: '1',
+  medicalOrders: [
+    {
+      id: '1',
+      type: 'exam',
+      description: 'Radiografía de tórax',
+      doctorName: 'Dr. María González',
+      orderDate: '2025-06-10',
+      status: 'pending'
+    },
+    {
+      id: '2',
+      type: 'therapy',
+      description: 'Terapia física - Rehabilitación de rodilla',
+      doctorName: 'Dr. Carlos Ruiz',
+      orderDate: '2025-06-08',
+      status: 'pending'
+    }
+  ]
 };
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
