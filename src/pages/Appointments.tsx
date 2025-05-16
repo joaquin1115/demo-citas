@@ -13,7 +13,11 @@ import {
   ChevronRight,
   Stethoscope,
   FileText,
-  Plus
+  Plus,
+  Save,
+  Thermometer,
+  Heart,
+  Clipboard
 } from 'lucide-react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -198,10 +202,18 @@ const PatientAppointmentsList: React.FC<{ onCreateNew: () => void }> = ({ onCrea
 };
 
 const CreateAppointment: React.FC<{ onCancel: () => void, onSuccess: () => void }> = ({ onCancel, onSuccess }) => {
+  const { user } = useUser();
+  const [step, setStep] = useState<'profile' | 'order' | 'specialty' | 'doctor' | 'datetime'>('profile');
+  const [selectedProfile, setSelectedProfile] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
   const [selectedDoctor, setSelectedDoctor] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState('');
+
+  // Sample data
+  const profiles = user?.profiles || [];
+  const orders = user?.medicalOrders || [];
   
   const specialties = [
     'Cardiología', 'Dermatología', 'Endocrinología', 'Gastroenterología',
@@ -218,133 +230,282 @@ const CreateAppointment: React.FC<{ onCancel: () => void, onSuccess: () => void 
   const availableTimes = ['09:00 AM', '10:30 AM', '11:45 AM', '02:15 PM', '03:30 PM'];
 
   const handleSubmit = () => {
-    // Here you would submit the appointment data
     onSuccess();
   };
 
-  if (!selectedSpecialty) {
-    return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-lg font-medium text-gray-800 mb-6">Seleccione Especialidad</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {specialties.map(specialty => (
-            <button
-              key={specialty}
-              className="p-4 border rounded-md text-left hover:bg-gray-50 transition-colors"
-              onClick={() => setSelectedSpecialty(specialty)}
-            >
-              {specialty}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <button 
-            onClick={() => setSelectedSpecialty('')}
-            className="text-blue-600 hover:text-blue-800 mb-2"
-          >
-            ← Cambiar especialidad
-          </button>
-          <h2 className="text-lg font-medium text-gray-800">
-            Programar cita - {selectedSpecialty}
-          </h2>
-        </div>
-        <button 
-          onClick={onCancel}
-          className="text-gray-500 hover:text-gray-700"
-        >
-          <X size={24} />
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Doctor Selection */}
-        <div className="space-y-4">
-          <h3 className="font-medium text-gray-800">Seleccione Médico</h3>
-          {doctors.map(doctor => (
-            <button
-              key={doctor.id}
-              disabled={!doctor.available}
-              onClick={() => setSelectedDoctor(doctor.id)}
-              className={`w-full p-4 border rounded-md text-left transition-colors ${
-                selectedDoctor === doctor.id 
-                  ? 'border-blue-500 bg-blue-50' 
-                  : doctor.available
-                    ? 'border-gray-200 hover:bg-gray-50'
-                    : 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
-              }`}
-            >
-              <div className="flex items-center">
-                <User className="h-5 w-5 text-gray-400 mr-2" />
-                <div>
-                  <p className="font-medium">{doctor.name}</p>
-                  <p className="text-sm text-gray-500">{doctor.specialty}</p>
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* Calendar */}
-        <div>
-          <h3 className="font-medium text-gray-800 mb-4">Seleccione Fecha</h3>
-          <Calendar
-            onChange={setSelectedDate}
-            value={selectedDate}
-            minDate={new Date()}
-            className="w-full border rounded-md p-2"
-          />
-        </div>
-
-        {/* Time Selection */}
-        <div>
-          <h3 className="font-medium text-gray-800 mb-4">Horarios Disponibles</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {availableTimes.map(time => (
-              <button
-                key={time}
-                onClick={() => setSelectedTime(time)}
-                className={`p-3 border rounded-md transition-colors ${
-                  selectedTime === time
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:bg-gray-50'
-                }`}
-              >
-                {time}
-              </button>
-            ))}
+  const renderStepContent = () => {
+    switch (step) {
+      case 'profile':
+        return (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-medium text-gray-800 mb-6">Seleccione el Paciente</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {profiles.map(profile => (
+                <button
+                  key={profile.id}
+                  onClick={() => {
+                    setSelectedProfile(profile.id);
+                    setStep('order');
+                  }}
+                  className={`p-4 border rounded-md text-left transition-colors ${
+                    selectedProfile === profile.id 
+                      ? 'border-blue-500 bg-blue-50' 
+                      : 'hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <User className="h-5 w-5 text-gray-400 mr-2" />
+                    <div>
+                      <p className="font-medium">{profile.name}</p>
+                      <p className="text-sm text-gray-500">
+                        {profile.isCurrentUser ? 'Titular' : 'Dependiente'}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
+        );
 
-          {selectedDoctor && selectedDate && selectedTime && (
-            <div className="mt-6 space-y-4">
-              <div className="bg-gray-50 p-4 rounded-md">
-                <h4 className="font-medium text-gray-800 mb-2">Resumen de la Cita</h4>
-                <div className="space-y-2 text-sm">
-                  <p><span className="text-gray-500">Especialidad:</span> {selectedSpecialty}</p>
-                  <p><span className="text-gray-500">Médico:</span> {doctors.find(d => d.id === selectedDoctor)?.name}</p>
-                  <p><span className="text-gray-500">Fecha:</span> {selectedDate.toLocaleDateString()}</p>
-                  <p><span className="text-gray-500">Hora:</span> {selectedTime}</p>
-                </div>
-              </div>
-
-              <button
-                onClick={handleSubmit}
-                className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+      case 'order':
+        return (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-medium text-gray-800">Órdenes Médicas Disponibles</h2>
+              <button 
+                onClick={() => setStep('specialty')}
+                className="text-sm text-blue-600 hover:text-blue-800"
               >
-                Confirmar Cita
+                Programar sin orden →
               </button>
             </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+            
+            {orders.length > 0 ? (
+              <div className="space-y-4">
+                {orders.map(order => (
+                  <button
+                    key={order.id}
+                    onClick={() => {
+                      setSelectedOrder(order);
+                      setStep('doctor');
+                    }}
+                    className="w-full p-4 border rounded-md text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center">
+                          <FileText className="h-5 w-5 text-blue-500 mr-2" />
+                          <h3 className="font-medium text-gray-800">{order.description}</h3>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Ordenado por: {order.doctorName}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Fecha: {order.orderDate}
+                        </p>
+                      </div>
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        order.status === 'pending'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : order.status === 'scheduled'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {order.status === 'pending' ? 'Pendiente' : 
+                         order.status === 'scheduled' ? 'Programada' : 'Completada'}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <FileText className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600">No hay órdenes médicas pendientes</p>
+                <button
+                  onClick={() => setStep('specialty')}
+                  className="mt-4 text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  Programar consulta médica
+                </button>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'specialty':
+        return (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-center mb-6">
+              <button 
+                onClick={() => setStep('order')}
+                className="text-blue-600 hover:text-blue-800 mr-3"
+              >
+                ← Volver
+              </button>
+              <h2 className="text-lg font-medium text-gray-800">Seleccione Especialidad</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {specialties.map(specialty => (
+                <button
+                  key={specialty}
+                  onClick={() => {
+                    setSelectedSpecialty(specialty);
+                    setStep('doctor');
+                  }}
+                  className="p-4 border rounded-md text-left hover:bg-gray-50 transition-colors"
+                >
+                  {specialty}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'doctor':
+        return (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-center mb-6">
+              <button 
+                onClick={() => setStep(selectedOrder ? 'order' : 'specialty')}
+                className="text-blue-600 hover:text-blue-800 mr-3"
+              >
+                ← Volver
+              </button>
+              <h2 className="text-lg font-medium text-gray-800">
+                Seleccione Médico - {selectedOrder ? selectedOrder.type : selectedSpecialty}
+              </h2>
+            </div>
+            <div className="space-y-4">
+              {doctors.map(doctor => (
+                <button
+                  key={doctor.id}
+                  disabled={!doctor.available}
+                  onClick={() => {
+                    setSelectedDoctor(doctor.id);
+                    setStep('datetime');
+                  }}
+                  className={`w-full p-4 border rounded-md text-left transition-colors ${
+                    selectedDoctor === doctor.id 
+                      ? 'border-blue-500 bg-blue-50' 
+                      : doctor.available
+                        ? 'border-gray-200 hover:bg-gray-50'
+                        : 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <User className="h-5 w-5 text-gray-400 mr-2" />
+                    <div>
+                      <p className="font-medium">{doctor.name}</p>
+                      <p className="text-sm text-gray-500">{doctor.specialty}</p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'datetime':
+        return (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-center mb-6">
+              <button 
+                onClick={() => setStep('doctor')}
+                className="text-blue-600 hover:text-blue-800 mr-3"
+              >
+                ← Volver
+              </button>
+              <h2 className="text-lg font-medium text-gray-800">Seleccione Fecha y Hora</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-medium text-gray-800 mb-4">Fecha</h3>
+                <Calendar
+                  onChange={setSelectedDate}
+                  value={selectedDate}
+                  minDate={new Date()}
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+
+              <div>
+                <h3 className="font-medium text-gray-800 mb-4">Horarios Disponibles</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {availableTimes.map(time => (
+                    <button
+                      key={time}
+                      onClick={() => setSelectedTime(time)}
+                      className={`p-3 border rounded-md transition-colors ${
+                        selectedTime === time
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
+
+                {selectedDate && selectedTime && (
+                  <div className="mt-6 space-y-4">
+                    <div className="bg-gray-50 p-4 rounded-md">
+                      <h4 className="font-medium text-gray-800 mb-2">Resumen de la Cita</h4>
+                      <div className="space-y-2 text-sm">
+                        <p>
+                          <span className="text-gray-500">Paciente:</span>{' '}
+                          {profiles.find(p => p.id === selectedProfile)?.name}
+                        </p>
+                        {selectedOrder ? (
+                          <>
+                            <p>
+                              <span className="text-gray-500">Orden:</span>{' '}
+                              {selectedOrder.description}
+                            </p>
+                            <p>
+                              <span className="text-gray-500">Tipo:</span>{' '}
+                              {selectedOrder.type}
+                            </p>
+                          </>
+                        ) : (
+                          <p>
+                            <span className="text-gray-500">Especialidad:</span>{' '}
+                            {selectedSpecialty}
+                          </p>
+                        )}
+                        <p>
+                          <span className="text-gray-500">Médico:</span>{' '}
+                          {doctors.find(d => d.id === selectedDoctor)?.name}
+                        </p>
+                        <p>
+                          <span className="text-gray-500">Fecha:</span>{' '}
+                          {selectedDate.toLocaleDateString()}
+                        </p>
+                        <p>
+                          <span className="text-gray-500">Hora:</span>{' '}
+                          {selectedTime}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleSubmit}
+                      className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      Confirmar Cita
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+    }
+  };
+
+  return renderStepContent();
 };
 
 const AdminAppointmentsList: React.FC = () => {
@@ -493,6 +654,7 @@ const AdminAppointmentsList: React.FC = () => {
 const MedicalAppointmentsList: React.FC = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<string | null>(null);
   const [showServiceForm, setShowServiceForm] = useState(false);
+  const [serviceType, setServiceType] = useState<string | null>(null);
   
   // Sample appointments for the medical personnel view
   const doctorAppointments = [
@@ -555,7 +717,7 @@ const MedicalAppointmentsList: React.FC = () => {
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center">
-                    <User className="h-5 w-5 text-gray-500 mr-2" />
+                    <User className="h-5  w-5 text-gray-500 mr-2" />
                     <h3 className="font-medium text-gray-800">{appointment.patient}</h3>
                   </div>
                   
@@ -623,8 +785,11 @@ const MedicalAppointmentsList: React.FC = () => {
             onClose={() => {
               setShowServiceForm(false);
               setSelectedAppointment(null);
+              setServiceType(null);
             }}
             appointment={doctorAppointments.find(a => a.id === selectedAppointment)!}
+            serviceType={serviceType}
+            onServiceTypeChange={setServiceType}
           />
         ) : (
           <>
@@ -660,152 +825,687 @@ interface ServiceFormProps {
   appointmentId: string;
   onClose: () => void;
   appointment: any;
+  serviceType: string | null;
+  onServiceTypeChange: (type: string | null) => void;
 }
 
-const ServiceForm: React.FC<ServiceFormProps> = ({ appointmentId, onClose, appointment }) => {
-  const [serviceType, setServiceType] = useState<string | null>(null);
-  const [showOrderForm, setShowOrderForm] = useState(false);
-
-  const handleCreateOrder = () => {
-    setShowOrderForm(true);
+const ServiceForm: React.FC<ServiceFormProps> = ({ 
+  appointmentId, 
+  onClose, 
+  appointment,
+  serviceType,
+  onServiceTypeChange
+}) => {
+  const [symptoms, setSymptoms] = useState<string[]>([]);
+  const [currentSymptom, setCurrentSymptom] = useState('');
+  const [medications, setMedications] = useState<any[]>([]);
+  
+  const addSymptom = () => {
+    if (currentSymptom.trim()) {
+      setSymptoms([...symptoms, currentSymptom.trim()]);
+      setCurrentSymptom('');
+    }
   };
+  
+  const removeSymptom = (index: number) => {
+    setSymptoms(symptoms.filter((_, i) => i !== index));
+  };
+
+  const addMedication = () => {
+    setMedications([...medications, { id: Date.now() }]);
+  };
+  
+  const removeMedication = (id: number) => {
+    setMedications(medications.filter(med => med.id !== id));
+  };
+
+  if (!serviceType) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-lg font-medium text-gray-800">Atención Médica</h2>
+            <p className="text-sm text-gray-600">Paciente: {appointment.patient}</p>
+          </div>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4">
+          <button
+            onClick={() => onServiceTypeChange('triage')}
+            className="p-4 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors text-left"
+          >
+            <div className="flex items-center">
+              <div className="p-3 bg-blue-100 rounded-full">
+                <Thermometer className="h-6 w-6 text-blue-600" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-lg font-medium">Triaje</h3>
+                <p className="text-sm text-gray-600">
+                  Registro de signos vitales y evaluación inicial
+                </p>
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => onServiceTypeChange('exam')}
+            className="p-4 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors text-left"
+          >
+            <div className="flex items-center">
+              <div className="p-3 bg-green-100 rounded-full">
+                <Clipboard className="h-6 w-6 text-green-600" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-lg font-medium">Examen Médico</h3>
+                <p className="text-sm text-gray-600">
+                  Registro de exámenes y resultados
+                </p>
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => onServiceTypeChange('diagnosis')}
+            className="p-4 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors text-left"
+          >
+            <div className="flex items-center">
+              <div className="p-3 bg-yellow-100 rounded-full">
+                <Stethoscope className="h-6 w-6 text-yellow-600" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-lg font-medium">Diagnóstico</h3>
+                <p className="text-sm text-gray-600">
+                  Registro de diagnóstico y morbilidades
+                </p>
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => onServiceTypeChange('treatment')}
+            className="p-4 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors text-left"
+          >
+            <div className="flex items-center">
+              <div className="p-3 bg-purple-100 rounded-full">
+                <FileText className="h-6 w-6 text-purple-600" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-lg font-medium">Tratamiento</h3>
+                <p className="text-sm text-gray-600">
+                  Registro de medicamentos y terapias
+                </p>
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => onServiceTypeChange('hospitalization')}
+            className="p-4 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors text-left"
+          >
+            <div className="flex items-center">
+              <div className="p-3 bg-red-100 rounded-full">
+                <Heart className="h-6 w-6 text-red-600" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-lg font-medium">Hospitalización</h3>
+                <p className="text-sm text-gray-600">
+                  Ingreso hospitalario y seguimiento
+                </p>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-lg font-medium text-gray-800">Atención Médica</h2>
+          <h2 className="text-lg font-medium text-gray-800">
+            {serviceType === 'triage' && 'Registro de Triaje'}
+            {serviceType === 'exam' && 'Registro de Examen Médico'}
+            {serviceType === 'diagnosis' && 'Registro de Diagnóstico'}
+            {serviceType === 'treatment' && 'Registro de Tratamiento'}
+            {serviceType === 'hospitalization' && 'Registro de Hospitalización'}
+          </h2>
           <p className="text-sm text-gray-600">Paciente: {appointment.patient}</p>
         </div>
-        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-          <X size={20} />
-        </button>
+        <div className="flex items-center space-x-2">
+          <button 
+            onClick={() => onServiceTypeChange(null)}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            ← Volver
+          </button>
+          <button 
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <X size={20} />
+          </button>
+        </div>
       </div>
 
-      {!showOrderForm ? (
+      {serviceType === 'triage' && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-4">
-            <button
-              onClick={() => setServiceType('consultation')}
-              className={`p-4 border rounded-md text-left transition-colors ${
-                serviceType === 'consultation' ? 'border-blue-500 bg-blue-50' : 'hover:bg-gray-50'
-              }`}
-            >
-              <div className="flex items-center">
-                <Stethoscope className="h-5 w-5 text-blue-500 mr-2" />
-                <div>
-                  <p className="font-medium">Consulta Médica</p>
-                  <p className="text-sm text-gray-500">Registro de consulta y diagnóstico</p>
-                </div>
-              </div>
-            </button>
-
-            <button
-              onClick={handleCreateOrder}
-              className="p-4 border rounded-md text-left hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-center">
-                <FileText className="h-5 w-5 text-green-500 mr-2" />
-                <div>
-                  <p className="font-medium">Generar Orden</p>
-                  <p className="text-sm text-gray-500">Exámenes, terapias o cirugías</p>
-                </div>
-              </div>
-            </button>
-          </div>
-
-          {serviceType === 'consultation' && (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Motivo de Consulta
-                </label>
-                <textarea
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  placeholder="Describa el motivo de la consulta..."
-                ></textarea>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Diagnóstico
-                </label>
-                <textarea
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  placeholder="Ingrese el diagnóstico..."
-                ></textarea>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tratamiento
-                </label>
-                <textarea
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  placeholder="Describa el tratamiento..."
-                ></textarea>
-              </div>
-
-              <div className="flex justify-end">
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                  Guardar Consulta
-                </button>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Temperatura (°C)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="36.5"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Presión Arterial (mmHg)
+              </label>
+              <div className="flex space-x-2">
+                <input
+                  type="number"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="120"
+                />
+                <span className="flex items-center">/</span>
+                <input
+                  type="number"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="80"
+                />
               </div>
             </div>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tipo de Orden
-            </label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-md">
-              <option value="">Seleccione un tipo</option>
-              <option value="exam">Examen Médico</option>
-              <option value="therapy">Terapia</option>
-              <option value="surgery">Intervención Quirúrgica</option>
-            </select>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Frecuencia Cardíaca (lpm)
+              </label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="75"
+              />
+            </div>
           </div>
-
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Frecuencia Respiratoria (rpm)
+              </label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="16"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Saturación de Oxígeno (%)
+              </label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="98"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Glicemia (mg/dL)
+              </label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="85"
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Peso (kg)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="70.5"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Talla (cm)
+              </label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="170"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                IMC
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
+                placeholder="24.3"
+                disabled
+              />
+            </div>
+          </div>
+          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Descripción
+              Observaciones
             </label>
             <textarea
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              placeholder="Describa los detalles de la orden..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Ingrese observaciones adicionales..."
             ></textarea>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Instrucciones
-            </label>
-            <textarea
-              rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              placeholder="Instrucciones adicionales..."
-            ></textarea>
-          </div>
-
-          <div className="flex justify-end space-x-3">
-            <button
-              onClick={() => setShowOrderForm(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-            >
-              Cancelar
-            </button>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-              Generar Orden
-            </button>
           </div>
         </div>
       )}
+
+      {serviceType === 'exam' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Tipo de Examen
+              </label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Seleccione un tipo</option>
+                <option value="blood">Análisis de Sangre</option>
+                <option value="urine">Análisis de Orina</option>
+                <option value="xray">Radiografía</option>
+                <option value="ultrasound">Ecografía</option>
+                <option value="ekg">Electrocardiograma</option>
+                <option value="ct">Tomografía Computarizada</option>
+                <option value="mri">Resonancia Magnética</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fecha del Examen
+              </label>
+              <input
+                type="date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Solicitado por
+              </label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Nombre del médico solicitante"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Motivo del Examen
+              </label>
+              <textarea
+                rows={2}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Razón por la que se solicita el examen..."
+              ></textarea>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Resultados
+              </label>
+              <textarea
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Describa los resultados del examen..."
+              ></textarea>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Interpretación
+              </label>
+              <textarea
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Interpretación médica de los resultados..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {serviceType === 'diagnosis' && (
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Síntomas Reportados
+            </label>
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                value={currentSymptom}
+                onChange={(e) => setCurrentSymptom(e.target.value)}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Ingrese un síntoma..."
+                onKeyPress={(e) => e.key === 'Enter' && addSymptom()}
+              />
+              <button
+                type="button"
+                onClick={addSymptom}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                <Plus size={18} />
+              </button>
+            </div>
+            
+            {symptoms.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {symptoms.map((symptom, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-center bg-blue-50 px-3 py-1 rounded-full"
+                  >
+                    <span className="text-blue-800">{symptom}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeSymptom(index)}
+                      className="ml-2 text-blue-500 hover:text-blue-700"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Diagnóstico Principal
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Buscar en CIE-10..."
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Diagnósticos Secundarios
+            </label>
+            <div className="border border-gray-300 rounded-md p-4">
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="diag1"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="diag1" className="ml-2 block text-sm text-gray-900">
+                    E11 - Diabetes mellitus tipo 2
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="diag2"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="diag2" className="ml-2 block text-sm text-gray-900">
+                    I10 - Hipertensión esencial (primaria)
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="diag3"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="diag3" className="ml-2 block text-sm text-gray-900">
+                    E78.0 - Hipercolesterolemia pura
+                  </label>
+                </div>
+              </div>
+              
+              <button
+                type="button"
+                className="mt-3 flex items-center text-sm text-blue-600 hover:text-blue-800"
+              >
+                <Plus size={16} className="mr-1" />
+                Añadir otro diagnóstico
+              </button>
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Notas Adicionales
+            </label>
+            <textarea
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Observaciones adicionales sobre el diagnóstico..."
+            ></textarea>
+          </div>
+        </div>
+      )}
+
+      {serviceType === 'treatment' && (
+        <div className="space-y-4">
+          {medications.map((med) => (
+            <div key={med.id} className="border border-gray-200 rounded-md p-4 relative">
+              <button
+                type="button"
+                onClick={() => removeMedication(med.id)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              >
+                <X size={18} />
+              </button>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nombre del Medicamento
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Ej: Paracetamol"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Presentación
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Ej: Tabletas 500mg"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Dosis
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Ej: 1 tableta"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Frecuencia
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Ej: Cada 8 horas"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Duración
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Ej: 5 días"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Indicaciones Especiales
+                </label>
+                <textarea
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Ej: Tomar después de las comidas..."
+                ></textarea>
+              </div>
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            onClick={addMedication}
+            className="w-full py-3 border border-dashed border-gray-300 rounded-md text-gray-600 hover:text-gray-800 hover:border-gray-400 transition-colors"
+          >
+            <Plus size={20} className="inline mr-2" />
+            Agregar otro medicamento
+          </button>
+        </div>
+      )}
+
+      {serviceType === 'hospitalization' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fecha de Ingreso
+              </label>
+              <input
+                type="date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Hora de Ingreso
+              </label>
+              <input
+                type="time"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Motivo de Hospitalización
+            </label>
+            <textarea
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Describa el motivo de la hospitalización..."
+            ></textarea>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Área/Departamento
+              </label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Seleccione un área</option>
+                <option value="internal">Medicina Interna</option>
+                <option value="surgery">Cirugía</option>
+                <option value="cardiology">Cardiología</option>
+                <option value="pediatrics">Pediatría</option>
+                <option value="icu">UCI</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                N° de Habitación
+              </label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Ej: 302-A"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Médico Responsable
+            </label>
+            <input
+              type="text"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Nombre del médico a cargo"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Notas de Ingreso
+            </label>
+            <textarea
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Observaciones adicionales sobre el ingreso..."
+            ></textarea>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-end mt-6 space-x-3">
+        <button
+          onClick={() => onServiceTypeChange(null)}
+          className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
+        >
+          <Save size={18} className="mr-2" />
+          Guardar Registro
+        </button>
+      </div>
     </div>
   );
 };
