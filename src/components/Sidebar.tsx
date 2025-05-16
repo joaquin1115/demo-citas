@@ -5,7 +5,8 @@ import {
   Home,
   FileText,
   Calendar,
-  Users
+  Users,
+  Stethoscope
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -40,7 +41,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       title: 'Citas Médicas',
       path: '/appointments',
       icon: <Calendar size={20} />,
-      roles: ['patient', 'medical']
+      roles: ['patient']
+    },
+    {
+      title: 'Servicios Médicos',
+      path: '/medical-services',
+      icon: <Stethoscope size={20} />,
+      roles: ['medical']
     },
     {
       title: 'Gestión de Accesos',
@@ -114,5 +121,3 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
     </aside>
   );
 };
-
-export default Sidebar;
