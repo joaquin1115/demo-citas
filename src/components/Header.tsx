@@ -45,6 +45,17 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     }
   };
 
+  const getRoleIcon = (role: UserRole) => {
+    switch (role) {
+      case 'medical':
+        return <Stethoscope size={16} className="mr-2" />;
+      case 'admin':
+        return <UserCog size={16} className="mr-2" />;
+      default:
+        return <User size={16} className="mr-2" />;
+    }
+  };
+
   const getRoleEmoji = (role: UserRole) => {
     switch (role) {
       case 'patient':
@@ -93,29 +104,31 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                   <p className="text-sm font-medium">{user.name}</p>
                   <p className="text-xs text-gray-500 truncate">{user.email}</p>
                 </div>
-                
-                {user.roles.length > 1 && (
-                  <div className="py-2 border-b border-gray-100">
-                    <p className="px-4 py-1 text-xs text-gray-500">Cambiar rol a:</p>
-                    {user.roles.filter(role => role !== user.currentRole).map(role => (
-                      <button
-                        key={role}
-                        onClick={() => handleRoleSwitch(role)}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center"
-                      >
-                        {role === 'medical' ? (
-                          <Stethoscope size={16} className="mr-2" />
-                        ) : role === 'admin' ? (
-                          <UserCog size={16} className="mr-2" />
-                        ) : (
-                          <User size={16} className="mr-2" />
-                        )}
-                        <span>{getRoleLabel(role)}</span>
-                        <span className="ml-2">{getRoleEmoji(role)}</span>
-                      </button>
-                    ))}
+
+                <div className="py-2 border-b border-gray-100">
+                  <div className="px-4 py-2 flex items-center bg-gray-50">
+                    {getRoleIcon(user.currentRole)}
+                    <span className="text-sm font-medium">{getRoleLabel(user.currentRole)}</span>
+                    <span className="ml-2">{getRoleEmoji(user.currentRole)}</span>
                   </div>
-                )}
+                  
+                  {user.roles.length > 1 && (
+                    <>
+                      <p className="px-4 py-1 text-xs text-gray-500 mt-2">Cambiar rol a:</p>
+                      {user.roles.filter(role => role !== user.currentRole).map(role => (
+                        <button
+                          key={role}
+                          onClick={() => handleRoleSwitch(role)}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center"
+                        >
+                          {getRoleIcon(role)}
+                          <span>{getRoleLabel(role)}</span>
+                          <span className="ml-2">{getRoleEmoji(role)}</span>
+                        </button>
+                      ))}
+                    </>
+                  )}
+                </div>
 
                 <div className="py-1">
                   <button
