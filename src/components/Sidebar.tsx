@@ -5,7 +5,6 @@ import {
   Home,
   FileText,
   Calendar,
-  Stethoscope,
   Users
 } from 'lucide-react';
 
@@ -42,12 +41,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       path: '/appointments',
       icon: <Calendar size={20} />,
       roles: ['patient', 'medical']
-    },
-    {
-      title: 'Servicios Médicos',
-      path: '/medical-services',
-      icon: <Stethoscope size={20} />,
-      roles: ['medical']
     },
     {
       title: 'Gestión de Accesos',

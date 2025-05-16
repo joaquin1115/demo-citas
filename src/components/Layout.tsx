@@ -6,7 +6,6 @@ import Sidebar from './Sidebar';
 import Dashboard from '../pages/Dashboard';
 import MedicalRecords from '../pages/MedicalRecords';
 import Appointments from '../pages/Appointments';
-import MedicalServices from '../pages/MedicalServices';
 import AccessManagement from '../pages/AccessManagement';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
@@ -29,7 +28,6 @@ const Layout = () => {
             <Route path="/" element={<Dashboard />} />
             <Route path="/medical-records/*" element={<MedicalRecords />} />
             <Route path="/appointments/*" element={<Appointments />} />
-            <Route path="/medical-services/*" element={<MedicalServices />} />
             <Route path="/access-management/*" element={<AccessManagement />} />
             <Route path="/login" element={<Navigate to="/" replace />} />
             <Route path="*" element={<NotFound />} />

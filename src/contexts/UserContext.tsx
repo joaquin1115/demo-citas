@@ -13,8 +13,9 @@ export interface UserProfile {
 // Define medical order type
 export interface MedicalOrder {
   id: string;
-  type: 'exam' | 'surgery' | 'therapy';
+  type: 'exam' | 'surgery' | 'therapy' | 'consultation';
   description: string;
+  specialty: string;
   doctorName: string;
   orderDate: string;
   status: 'pending' | 'scheduled' | 'completed';
@@ -74,6 +75,7 @@ const sampleUser: User = {
       id: '1',
       type: 'exam',
       description: 'Radiografía de tórax',
+      specialty: 'Radiología',
       doctorName: 'Dr. María González',
       orderDate: '2025-06-10',
       status: 'pending'
@@ -82,6 +84,7 @@ const sampleUser: User = {
       id: '2',
       type: 'therapy',
       description: 'Terapia física - Rehabilitación de rodilla',
+      specialty: 'Medicina Física y Rehabilitación',
       doctorName: 'Dr. Carlos Ruiz',
       orderDate: '2025-06-08',
       status: 'pending'
