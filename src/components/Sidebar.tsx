@@ -121,3 +121,5 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
     </aside>
   );
 };
+
+export default Sidebar
